@@ -7,6 +7,7 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.engineio.client.transports.WebSocket;
 import me.quesia.practiceseedmod.core.Seed;
+import me.quesia.practiceseedmod.core.Ws;
 import me.quesia.practiceseedmod.core.WorldConstants;
 import me.quesia.practiceseedmod.core.config.ConfigPresets;
 import me.quesia.practiceseedmod.core.config.ConfigWrapper;
@@ -40,6 +41,8 @@ public class PracticeSeedMod implements ClientModInitializer {
 
     public static final String LOGGER_NAME = Objects.requireNonNull(MOD_CONTAINER).getMetadata().getName();
     public static final Logger LOGGER = LogManager.getLogger(LOGGER_NAME);
+    public static Ws ws;
+    public static final URI WS_URI = URI.create("ws://127.0.0.1:3000/connect");
     public static Socket SOCKET;
     public static final URI SOCKET_URI = URI.create("https://desolate-cove-87183.herokuapp.com");
 
@@ -166,6 +169,10 @@ public class PracticeSeedMod implements ClientModInitializer {
     public void onInitializeClient() {
         WorldConstants.reset();
         UpdateChecker.check();
+
+        PracticeSeedMod.log("connecting to local ws server");
+        ws = new Ws(WS_URI);
+        ws.connect();
 
         IO.Options options = IO.Options.builder()
                 .setTransports(new String[] { WebSocket.NAME })

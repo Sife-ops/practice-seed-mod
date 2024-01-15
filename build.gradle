@@ -27,6 +27,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	shadow implementation("io.socket:socket.io-client:2.1.0")
+	shadow implementation("org.java-websocket:Java-WebSocket:1.5.4")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
