@@ -1,11 +1,5 @@
 package me.quesia.practiceseedmod;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import io.socket.client.IO;
-import io.socket.client.Socket;
-import io.socket.engineio.client.transports.WebSocket;
 import me.quesia.practiceseedmod.core.Seed;
 import me.quesia.practiceseedmod.core.Ws;
 import me.quesia.practiceseedmod.core.WorldConstants;
@@ -43,8 +37,6 @@ public class PracticeSeedMod implements ClientModInitializer {
     public static final Logger LOGGER = LogManager.getLogger(LOGGER_NAME);
     public static Ws ws;
     public static final URI WS_URI = URI.create("ws://127.0.0.1:3000/connect");
-    public static Socket SOCKET;
-    public static final URI SOCKET_URI = URI.create("https://desolate-cove-87183.herokuapp.com");
 
     public static boolean RUNNING = false;
     public static UUID UUID;
@@ -173,60 +165,5 @@ public class PracticeSeedMod implements ClientModInitializer {
         PracticeSeedMod.log("connecting to local ws server");
         ws = new Ws(WS_URI);
         ws.connect();
-
-        IO.Options options = IO.Options.builder()
-                .setTransports(new String[] { WebSocket.NAME })
-                .build();
-
-        SOCKET = IO.socket(SOCKET_URI, options);
-        SOCKET.connect();
-        SOCKET.on("play-seed", args1 -> {
-            JsonParser parser = new JsonParser();
-            JsonArray args = parser.parse(Arrays.toString(args1)).getAsJsonArray().get(0).getAsJsonArray();
-
-            if (UUID != null && args.get(0).getAsString().equals(UUID.toString())) {
-                try {
-                    if (!IS_RACE) {
-                        long l = Long.parseLong(args.get(1).getAsString());
-                        JsonElement notesElement = args.get(2);
-                        String notes = null;
-                        if (notesElement != null && !notesElement.isJsonNull()) {
-                            notes = notesElement.getAsString();
-                        }
-                        QUEUE.add(new Seed(l, notes));
-                        log("Added seed " + l + " to queue.");
-                        if (!RUNNING) {
-                            if (!MinecraftClient.getInstance().isInSingleplayer()) {
-                                RUNNING = true;
-                                playNextSeed();
-                            }
-                        }
-                    }
-                } catch (NumberFormatException ignored) {
-                    log("Invalid seed!");
-                } catch(IndexOutOfBoundsException ignored) {
-                    log("Invalid request received!");
-                }
-            }
-        });
-        SOCKET.on("race-seed", args1 -> {
-            JsonParser parser = new JsonParser();
-            JsonArray args = parser.parse(Arrays.toString(args1)).getAsJsonArray().get(0).getAsJsonArray();
-
-            if (args.get(0).getAsString().equals(RACE_PASSWORD) && IS_RACE) {
-                try {
-                    QUEUE.clear();
-                    long l = Long.parseLong(args.get(1).getAsString());
-                    QUEUE.add(new Seed(l, null));
-                    RACE_HOST = args.get(2).getAsString();
-                    RUNNING = true;
-                    playNextSeed();
-                } catch (NumberFormatException ignored) {
-                    log("Invalid seed!");
-                } catch (IndexOutOfBoundsException ignored) {
-                    log("Invalid request received!");
-                }
-            }
-        });
     }
 }
