@@ -39,12 +39,12 @@ public class PracticeSeedMod implements ClientModInitializer {
     public static final URI WS_URI = URI.create("ws://127.0.0.1:3000/connect");
 
     public static boolean RUNNING = false;
-    public static UUID UUID;
+    public static UUID UUID = java.util.UUID.randomUUID();
     public static final List<Seed> QUEUE = new ArrayList<>();
     public static Seed CURRENT_SEED;
 
     public static boolean IS_RACE = false;
-    public static String RACE_PASSWORD;
+    public static String RACE_PASSWORD = null; // todo remove
     public static String RACE_HOST;
 
     public static final AtomicBoolean SAVING = new AtomicBoolean(false);
