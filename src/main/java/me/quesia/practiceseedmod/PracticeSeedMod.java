@@ -36,7 +36,7 @@ public class PracticeSeedMod implements ClientModInitializer {
     public static final String LOGGER_NAME = Objects.requireNonNull(MOD_CONTAINER).getMetadata().getName();
     public static final Logger LOGGER = LogManager.getLogger(LOGGER_NAME);
     public static Ws ws;
-    public static final URI WS_URI = URI.create("ws://127.0.0.1:3000/connect");
+    public static final URI WS_URI = URI.create("ws://127.0.0.1:3000/ws/minecraft");
 
     public static boolean RUNNING = false;
     public static UUID UUID = java.util.UUID.randomUUID();
